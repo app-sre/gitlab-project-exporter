@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "python-project-template"
+name = "gitlab-project-exporter"
 version = "0.1.0"
 description = "Please describe me"
 authors = ["first-name last-name <email@address.com>"]
 license = "Apache 2.0"
 readme = "README.md"
-packages = [{ include = "python_project_template" }]
-homepage = "https://github.com/app-sre/python-project-template"
-repository = "https://github.com/app-sre/python-project-template"
-documentation = "https://github.com/app-sre/python-project-template"
+packages = [{ include = "gitlab_project_exporter" }]
+homepage = "https://github.com/app-sre/gitlab-project-exporter"
+repository = "https://github.com/app-sre/gitlab-project-exporter"
+documentation = "https://github.com/app-sre/gitlab-project-exporter"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -24,14 +24,14 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-python-project-template = 'python_project_template.__main__:app'
+gitlab-project-exporter = 'gitlab_project_exporter.__main__:app'
 
 # Ruff configuration
 [tool.ruff]
 line-length = 88
 target-version = 'py311'
 required-version = "0.6.2" # keep in sync with dev dependencies!
-src = ["python_project_template"]
+src = ["gitlab_project_exporter"]
 extend-exclude = [
     ".local", # used by poetry in local venv
     ".cache", # used by poetry in local venv
@@ -79,11 +79,11 @@ ignore = [
 preview = true
 
 [tool.ruff.lint.isort]
-known-first-party = ["python_project_template"]
+known-first-party = ["gitlab_project_exporter"]
 
 # Mypy configuration
 [tool.mypy]
-files = ["python_project_template", "tests"]
+files = ["gitlab_project_exporter", "tests"]
 enable_error_code = ["truthy-bool", "redundant-expr"]
 no_implicit_optional = true
 check_untyped_defs = true

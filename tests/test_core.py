@@ -1,4 +1,4 @@
-from python_project_template.core import app
+from gitlab_project_exporter.core import app
 
 
 def test_app() -> None:

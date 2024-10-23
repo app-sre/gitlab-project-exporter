@@ -1,4 +1,4 @@
-CODE_ROOT := python_project_template
+CODE_ROOT := gitlab_project_exporter
 # TWINE_USERNAME & TWINE_PASSWORD are available in the Jenkins job
 BUILD_ARGS := CODE_ROOT=$(CODE_ROOT) POETRY_VERSION=1.8.3 TWINE_USERNAME TWINE_PASSWORD
 CONTAINER_ENGINE ?= $(shell which podman >/dev/null 2>&1 && echo podman || echo docker)

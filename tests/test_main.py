@@ -1,1 +1,1 @@
-import python_project_template.__main__  # noqa: F401 - test imports
+import gitlab_project_exporter.__main__  # noqa: F401 - test imports
