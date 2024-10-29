@@ -10,53 +10,61 @@ from gitlab_project_exporter.collector import (
     GitLabProjectCollector,
     RemoteMirrorCollectionResult,
 )
-from gitlab_project_exporter.gitlab_project import GitlabProject
-
-from .conftest import (
-    GITLAB_URL,
-    PROJECT_ID,
-    REMOTE_MIRROR_STATUS_KO,
-    REMOTE_MIRROR_STATUS_OK,
+from gitlab_project_exporter.gitlab_project import (
+    GitlabProject,
+    RemoteMirrorStatus,
 )
 
 
 @pytest.fixture
-def collector() -> GitLabProjectCollector:
+def collector(gitlab_url: str, project_id: int) -> GitLabProjectCollector:
     return GitLabProjectCollector(
-        gitlab_client=Gitlab(GITLAB_URL), project_ids=[str(PROJECT_ID)]
+        gitlab_client=Gitlab(gitlab_url), project_ids=[str(project_id)]
     )
 
 
 @pytest.mark.usefixtures("project")
 def test_collect_remote_mirror(
-    collector: GitLabProjectCollector, mocker: MockerFixture
+    collector: GitLabProjectCollector,
+    mocker: MockerFixture,
+    project_id: int,
+    remote_mirror_status_ok: RemoteMirrorStatus,
+    remote_mirror_status_ko: RemoteMirrorStatus,
 ) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
-    project_mocker.return_value = [REMOTE_MIRROR_STATUS_OK, REMOTE_MIRROR_STATUS_KO]
+    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_ko]
     assert collector.collect_project_remote_mirrors(
-        str(PROJECT_ID)
+        str(project_id)
     ) == RemoteMirrorCollectionResult(
-        project_id=str(PROJECT_ID),
-        status=[REMOTE_MIRROR_STATUS_OK, REMOTE_MIRROR_STATUS_KO],
+        project_id=str(project_id),
+        status=[remote_mirror_status_ok, remote_mirror_status_ko],
     )
 
 
 @pytest.mark.usefixtures("project")
 def test_collect_remote_mirror_exception(
-    collector: GitLabProjectCollector, mocker: MockerFixture
+    collector: GitLabProjectCollector,
+    mocker: MockerFixture,
+    project_id: int,
 ) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
     exception = ConnectionError()
     project_mocker.side_effect = exception
     assert collector.collect_project_remote_mirrors(
-        str(PROJECT_ID)
-    ) == RemoteMirrorCollectionResult(project_id=str(PROJECT_ID), exception=exception)
+        str(project_id)
+    ) == RemoteMirrorCollectionResult(project_id=str(project_id), exception=exception)
 
 
 @pytest.mark.usefixtures("project")
-def test_collector(collector: GitLabProjectCollector, mocker: MockerFixture) -> None:
+def test_collector(
+    collector: GitLabProjectCollector,
+    mocker: MockerFixture,
+    project_id: int,
+    remote_mirror_status_ok: RemoteMirrorStatus,
+    remote_mirror_status_ko: RemoteMirrorStatus,
+) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
-    project_mocker.return_value = [REMOTE_MIRROR_STATUS_OK, REMOTE_MIRROR_STATUS_KO]
+    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_ko]
 
     expected_metric = GaugeMetricFamily(
         "gitlab_remote_mirror_status",
@@ -65,19 +73,19 @@ def test_collector(collector: GitLabProjectCollector, mocker: MockerFixture) -> 
     )
     expected_metric.add_metric(
         [
-            str(PROJECT_ID),
-            REMOTE_MIRROR_STATUS_OK.mirror_id,
-            REMOTE_MIRROR_STATUS_OK.url,
+            str(project_id),
+            remote_mirror_status_ok.mirror_id,
+            remote_mirror_status_ok.url,
         ],
-        REMOTE_MIRROR_STATUS_OK.status,
+        remote_mirror_status_ok.status,
     )
     expected_metric.add_metric(
         [
-            str(PROJECT_ID),
-            REMOTE_MIRROR_STATUS_KO.mirror_id,
-            REMOTE_MIRROR_STATUS_KO.url,
+            str(project_id),
+            remote_mirror_status_ko.mirror_id,
+            remote_mirror_status_ko.url,
         ],
-        REMOTE_MIRROR_STATUS_KO.status,
+        remote_mirror_status_ko.status,
     )
 
     assert collector.collect_all_projects_remote_mirrors() == expected_metric

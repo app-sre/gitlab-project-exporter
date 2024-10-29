@@ -1,8 +1,5 @@
-import os
 from collections.abc import Iterable
 from http import HTTPStatus
-from shutil import rmtree
-from tempfile import mkdtemp
 
 import pytest
 import responses
@@ -14,38 +11,50 @@ from gitlab_project_exporter.gitlab_project import (
     RemoteMirrorStatus,
 )
 
-GITLAB_URL = "https://gitlab.mine"
-PROJECT_ID = 107187
-PROJECT_URL = f"{GITLAB_URL}/api/v4/projects/{PROJECT_ID}"
-REMOTE_MIRROR_STATUS_OK = RemoteMirrorStatus(
-    mirror_id="1", url="http://good-mirror.org", status=MirrorStatusCode.OK
-)
-REMOTE_MIRROR_STATUS_KO = RemoteMirrorStatus(
-    mirror_id="2", url="http://bad-mirror.org", status=MirrorStatusCode.KO
-)
 
-
-os.environ["PROJECT_IDS"] = f'["{PROJECT_ID}"]'
-os.environ["GITLAB_URL"] = GITLAB_URL
-os.environ["PROMETHEUS_MULTIPROC_DIR"] = mkdtemp()
-
-
-def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:  # noqa: ARG001
-    rmtree(os.environ["PROMETHEUS_MULTIPROC_DIR"])
+@pytest.fixture
+def gitlab_url() -> str:
+    return "https://gitlab.mine"
 
 
 @pytest.fixture
-def project() -> Iterable[GitlabProject]:
-    project_content = {"name": "rporresm/mirror-test", "id": PROJECT_ID}
+def project_id() -> int:
+    return 107187
+
+
+@pytest.fixture
+def project_url(gitlab_url: str, project_id: str) -> str:
+    return f"{gitlab_url}/api/v4/projects/{project_id}"
+
+
+@pytest.fixture
+def remote_mirror_status_ok() -> RemoteMirrorStatus:
+    return RemoteMirrorStatus(
+        mirror_id="1", url="http://good-mirror.org", status=MirrorStatusCode.OK
+    )
+
+
+@pytest.fixture
+def remote_mirror_status_ko() -> RemoteMirrorStatus:
+    return RemoteMirrorStatus(
+        mirror_id="2", url="http://bad-mirror.org", status=MirrorStatusCode.KO
+    )
+
+
+@pytest.fixture
+def project(
+    project_id: int, project_url: str, gitlab_url: str
+) -> Iterable[GitlabProject]:
+    project_content = {"name": "rporresm/mirror-test", "id": project_id}
     with responses.RequestsMock() as rsps:
         rsps.add(
             method=responses.GET,
-            url=PROJECT_URL,
+            url=project_url,
             json=project_content,
             content_type="application/json",
             status=HTTPStatus.OK,
         )
 
         yield GitlabProject(
-            gitlab_client=Gitlab(GITLAB_URL), project_id=str(PROJECT_ID)
+            gitlab_client=Gitlab(gitlab_url), project_id=str(project_id)
         )

@@ -8,14 +8,12 @@ from gitlab_project_exporter.gitlab_project import (
     RemoteMirrorStatus,
 )
 
-from .conftest import PROJECT_URL
-
 
 def test_init_project_object(project: GitlabProject) -> None:
     assert project.project.name
 
 
-def test_remote_mirrors_ok(project: GitlabProject) -> None:
+def test_remote_mirrors_ok(project: GitlabProject, project_url: str) -> None:
     mirror_response = {
         "id": 1210,
         "enabled": True,
@@ -33,7 +31,7 @@ def test_remote_mirrors_ok(project: GitlabProject) -> None:
     with responses.RequestsMock() as rsps:
         rsps.add(
             method=responses.GET,
-            url=f"{PROJECT_URL}/remote_mirrors",
+            url=f"{project_url}/remote_mirrors",
             json=[mirror_response],
             content_type="application/json",
             status=HTTPStatus.OK,
@@ -49,7 +47,7 @@ def test_remote_mirrors_ok(project: GitlabProject) -> None:
         ]
 
 
-def test_remote_mirrors_ko(project: GitlabProject) -> None:
+def test_remote_mirrors_ko(project: GitlabProject, project_url: str) -> None:
     mirror_response = {
         "id": 1210,
         "enabled": True,
@@ -67,7 +65,7 @@ def test_remote_mirrors_ko(project: GitlabProject) -> None:
     with responses.RequestsMock() as rsps:
         rsps.add(
             method=responses.GET,
-            url=f"{PROJECT_URL}/remote_mirrors",
+            url=f"{project_url}/remote_mirrors",
             json=[mirror_response],
             content_type="application/json",
             status=HTTPStatus.OK,
