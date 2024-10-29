@@ -18,7 +18,7 @@ Prometheus exporter for Gitlab Projects
 | PROJECT_IDS       | Yes       |                            | Gitlab Project IDS, e.g. '["user/project"]' |
 | GITLAB_URL        | No        | https://gitlab.com         | Gitlab base url                             |
 | GITLAB_TOKEN      | No        | ""                         | Personal access token                       |
-| GITLAB_SSL_VERIFY | No        | false                      | SSL verify for gitlab api queries           |
+| GITLAB_SSL_VERIFY | No        | true                       | SSL verify for gitlab api queries           |
 | LOG_LEVEL         | No        | INFO                       | Log level Uvicorn options                   |
 | UVICORN_OPTS      | No        | --host 0.0.0.0 --port 8080 | Uvicorn options                             |
 
