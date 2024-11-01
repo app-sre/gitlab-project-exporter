@@ -32,10 +32,13 @@ class RemoteMirrorCollectionResult:
 
 
 class GitLabProjectCollector(Collector):
-    def __init__(self, gitlab_client: Gitlab, project_ids: Iterable[str]) -> None:
+    def __init__(
+        self, gitlab_client: Gitlab, project_ids: Iterable[str], max_workers: int
+    ) -> None:
         super().__init__()
         self.gl = gitlab_client
         self.project_ids = project_ids
+        self.max_workers = max_workers
 
     def collect(self) -> Iterable[Metric]:
         yield self.collect_all_projects_remote_mirrors()
@@ -47,7 +50,7 @@ class GitLabProjectCollector(Collector):
             labels=["project_id", "mirror_id", "mirror_url"],
         )
 
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             for result in executor.map(
                 self.collect_project_remote_mirrors, self.project_ids
             ):

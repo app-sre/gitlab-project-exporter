@@ -15,11 +15,15 @@ from gitlab_project_exporter.gitlab_project import (
     RemoteMirrorStatus,
 )
 
+MAX_WORKERS = 10
+
 
 @pytest.fixture
 def collector(gitlab_url: str, project_id: int) -> GitLabProjectCollector:
     return GitLabProjectCollector(
-        gitlab_client=Gitlab(gitlab_url), project_ids=[str(project_id)]
+        gitlab_client=Gitlab(gitlab_url),
+        project_ids=[str(project_id)],
+        max_workers=MAX_WORKERS,
     )
 
 

@@ -27,7 +27,11 @@ def make_metrics_app() -> Callable:
     )
     registry = CollectorRegistry()
     registry.register(
-        GitLabProjectCollector(gitlab_client=gl, project_ids=settings.project_ids)
+        GitLabProjectCollector(
+            gitlab_client=gl,
+            project_ids=settings.project_ids,
+            max_workers=settings.max_collector_threadpool_workers,
+        )
     )
     multiprocess.MultiProcessCollector(registry)
     return make_asgi_app(registry=registry)
