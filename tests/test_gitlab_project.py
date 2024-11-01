@@ -51,7 +51,7 @@ def test_remote_mirrors_ok(project: GitlabProject, project_url: str) -> None:
 # See https://github.com/pytest-dev/pytest/issues/349
 
 
-def test_remote_mirrors_to_retry_ko(project: GitlabProject, project_url: str) -> None:
+def test_remote_mirrors_to_retry(project: GitlabProject, project_url: str) -> None:
     mirror_response = {
         "id": 1210,
         "enabled": True,
@@ -79,13 +79,13 @@ def test_remote_mirrors_to_retry_ko(project: GitlabProject, project_url: str) ->
         assert mirrors == [
             RemoteMirrorStatus(
                 mirror_id=str(mirror_response["id"]),
-                status=MirrorStatusCode.KO,
+                status=MirrorStatusCode.FAILED,
                 url=str(mirror_response["url"]),
             )
         ]
 
 
-def test_remote_mirrors_failed_ko(project: GitlabProject, project_url: str) -> None:
+def test_remote_mirrors_failed(project: GitlabProject, project_url: str) -> None:
     mirror_response = {
         "id": 1210,
         "enabled": True,
@@ -113,13 +113,13 @@ def test_remote_mirrors_failed_ko(project: GitlabProject, project_url: str) -> N
         assert mirrors == [
             RemoteMirrorStatus(
                 mirror_id=str(mirror_response["id"]),
-                status=MirrorStatusCode.KO,
+                status=MirrorStatusCode.FAILED,
                 url=str(mirror_response["url"]),
             )
         ]
 
 
-def test_remote_mirrors_none_ko(project: GitlabProject, project_url: str) -> None:
+def test_remote_mirrors_none(project: GitlabProject, project_url: str) -> None:
     mirror_response = {
         "id": 1213,
         "enabled": True,
@@ -147,7 +147,7 @@ def test_remote_mirrors_none_ko(project: GitlabProject, project_url: str) -> Non
         assert mirrors == [
             RemoteMirrorStatus(
                 mirror_id=str(mirror_response["id"]),
-                status=MirrorStatusCode.KO,
+                status=MirrorStatusCode.FAILED,
                 url=str(mirror_response["url"]),
             )
         ]

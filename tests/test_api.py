@@ -35,11 +35,11 @@ def test_healthz(client: TestClient) -> None:
 def test_metrics(
     mocker: MockerFixture,
     remote_mirror_status_ok: RemoteMirrorStatus,
-    remote_mirror_status_ko: RemoteMirrorStatus,
+    remote_mirror_status_failed: RemoteMirrorStatus,
     client: TestClient,
 ) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
-    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_ko]
+    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_failed]
 
     response = client.get("/metrics/")
     assert response.status_code == HTTPStatus.OK
@@ -47,7 +47,7 @@ def test_metrics(
 
 
 @pytest.mark.usefixtures("project")
-def test_metrics_ko(mocker: MockerFixture, client: TestClient) -> None:
+def test_metrics_failed(mocker: MockerFixture, client: TestClient) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
     project_mocker.side_effect = ConnectionError()
 

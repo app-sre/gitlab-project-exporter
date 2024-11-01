@@ -17,7 +17,7 @@ FAILURE_STATUS = {"to_retry", "failed", "none"}
 
 class MirrorStatusCode(IntEnum):
     OK = 0
-    KO = 1
+    FAILED = 1
 
 
 class RemoteMirrorStatus(BaseModel):
@@ -41,7 +41,7 @@ class GitlabProject:
         response = []
         for m in mirrors:
             status = (
-                MirrorStatusCode.KO
+                MirrorStatusCode.FAILED
                 if m.update_status in FAILURE_STATUS
                 else MirrorStatusCode.OK
             )

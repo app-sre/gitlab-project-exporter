@@ -35,9 +35,9 @@ def remote_mirror_status_ok() -> RemoteMirrorStatus:
 
 
 @pytest.fixture
-def remote_mirror_status_ko() -> RemoteMirrorStatus:
+def remote_mirror_status_failed() -> RemoteMirrorStatus:
     return RemoteMirrorStatus(
-        mirror_id="2", url="http://bad-mirror.org", status=MirrorStatusCode.KO
+        mirror_id="2", url="http://bad-mirror.org", status=MirrorStatusCode.FAILED
     )
 
 

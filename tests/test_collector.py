@@ -33,15 +33,15 @@ def test_collect_remote_mirror(
     mocker: MockerFixture,
     project_id: int,
     remote_mirror_status_ok: RemoteMirrorStatus,
-    remote_mirror_status_ko: RemoteMirrorStatus,
+    remote_mirror_status_failed: RemoteMirrorStatus,
 ) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
-    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_ko]
+    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_failed]
     assert collector.collect_project_remote_mirrors(
         str(project_id)
     ) == RemoteMirrorCollectionResult(
         project_id=str(project_id),
-        status=[remote_mirror_status_ok, remote_mirror_status_ko],
+        status=[remote_mirror_status_ok, remote_mirror_status_failed],
     )
 
 
@@ -65,10 +65,10 @@ def test_collector(
     mocker: MockerFixture,
     project_id: int,
     remote_mirror_status_ok: RemoteMirrorStatus,
-    remote_mirror_status_ko: RemoteMirrorStatus,
+    remote_mirror_status_failed: RemoteMirrorStatus,
 ) -> None:
     project_mocker = mocker.patch.object(GitlabProject, "get_remote_mirrors_status")
-    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_ko]
+    project_mocker.return_value = [remote_mirror_status_ok, remote_mirror_status_failed]
 
     expected_metric = GaugeMetricFamily(
         "gitlab_remote_mirror_status",
@@ -86,10 +86,10 @@ def test_collector(
     expected_metric.add_metric(
         [
             str(project_id),
-            remote_mirror_status_ko.mirror_id,
-            remote_mirror_status_ko.url,
+            remote_mirror_status_failed.mirror_id,
+            remote_mirror_status_failed.url,
         ],
-        remote_mirror_status_ko.status,
+        remote_mirror_status_failed.status,
     )
 
     assert collector.collect_all_projects_remote_mirrors() == expected_metric
