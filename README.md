@@ -20,7 +20,9 @@ Prometheus exporter for Gitlab Projects
 | GITLAB_TOKEN      | No        | ""                         | Personal access token                       |
 | GITLAB_SSL_VERIFY | No        | true                       | SSL verify for gitlab api queries           |
 | LOG_LEVEL         | No        | INFO                       | Log level Uvicorn options                   |
-| UVICORN_OPTS      | No        | --host 0.0.0.0 --port 8080 | Uvicorn options                             |
+| UVICORN_HOST      | No        | 0.0.0.0                    | Uvicorn host                                |
+| UVICORN_PORT      | No        | 8080                       | Uvicorn port                                |
+| UVICORN_RELOAD    | No        | false                      | Uvicorn watches for files changed to reload |
 
 # Development
 
@@ -38,11 +40,10 @@ See https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html
 
 ## Start server
 
-export PROMETHEUS_MULTIPROC_DIR=$(mktemp -d)
 export GITLAB_TOKEN="<your-personal-access-token>"
 export PROJECT_IDS='["one/project","another/project"]'
-poetry run fastapi dev gitlab_project_exporter/main.py
+./dev.sh
 
 ## Getting metrics
 
-curl localhost:8000/metrics/
+curl localhost:8080/metrics/

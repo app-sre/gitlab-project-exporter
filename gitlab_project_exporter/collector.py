@@ -9,7 +9,7 @@ from gitlab.exceptions import GitlabGetError
 from prometheus_client.core import GaugeMetricFamily, Metric
 from prometheus_client.registry import Collector
 
-from .gitlab_project import (
+from gitlab_project_exporter.gitlab_project import (
     GetRemoteMirrorsStatusType,
     GitlabProject,
 )

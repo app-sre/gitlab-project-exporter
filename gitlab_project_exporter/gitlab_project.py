@@ -10,7 +10,7 @@ TIMEOUT = 10
 
 # based on remote mirror state machine, see
 # https://gitlab.com/gitlab-org/gitlab/-/blob/06cf7af7413c13c7cfd0a667e53014d0d0693280/app/models/remote_mirror.rb#L40-83
-# Invluding none looks weird, but not having initialised the mirror can count as a
+# Including none looks weird, but not having initialised the mirror can count as a
 # failure as we would end up not having the mirror, which is what want at the end.
 FAILURE_STATUS = {"to_retry", "failed", "none"}
 

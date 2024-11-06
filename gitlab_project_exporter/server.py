@@ -4,9 +4,8 @@ from fastapi import APIRouter, FastAPI
 from gitlab import Gitlab
 from prometheus_client import CollectorRegistry, make_asgi_app, multiprocess
 
-from .collector import GitLabProjectCollector
-from .config import Settings
-from .log_config import set_logging
+from gitlab_project_exporter.collector import GitLabProjectCollector
+from gitlab_project_exporter.config import Settings
 
 default_router = APIRouter()
 
@@ -19,7 +18,6 @@ def healthz() -> str:
 def make_metrics_app() -> Callable:
     # mypy complains about Missing named argument "project_ids"
     settings = Settings()  # type: ignore[call-arg]
-    set_logging(settings)
     gl = Gitlab(
         settings.gitlab_url,
         private_token=settings.gitlab_token,
