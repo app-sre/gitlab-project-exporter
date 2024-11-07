@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: gitlab-project-exporter
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ${NAME}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      ignore-check.kube-linter.io/minimum-three-replicas: "multiple replicas is multiple cost"
+      ignore-check.kube-linter.io/unset-cpu-requirements: "no cpu limits"
+    labels:
+      app: ${NAME}
+    name: ${NAME}
+  spec:
+    replicas: ${{REPLICAS}}
+    selector:
+      matchLabels:
+        app: ${NAME}
+    template:
+      metadata:
+        labels:
+          app: ${NAME}
+      spec:
+        serviceAccountName: ${NAME}
+        containers:
+        - name: gitlab-project-exporter
+          image: ${IMAGE}:${IMAGE_TAG}
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          env:
+          - name: GITLAB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: ${SECRET_NAME}
+                key: ${SECRET_KEY}
+          - name: PROJECT_IDS
+            value: '${PROJECT_IDS}'
+          - name: GITLAB_URL
+            value: ${GITLAB_URL}
+          - name: LOG_LEVEL
+            value: ${LOG_LEVEL}
+          resources:
+            limits:
+              memory: ${MEMORY_LIMITS}
+            requests:
+              cpu: ${CPU_REQUESTS}
+              memory: ${MEMORY_REQUESTS}
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 1
+            initialDelaySeconds: 10
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 1
+            initialDelaySeconds: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${NAME}
+    name: ${NAME}
+  spec:
+    selector:
+      app: ${NAME}
+    ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    type: ClusterIP
+parameters:
+- name: NAME
+  value: gitlab-project-exporter
+- name: IMAGE
+  value: quay.io/redhat-services-prod/app-sre-tenant/gitlab-project-exporter-main/gitlab-project-exporter-main
+- name: IMAGE_TAG
+  value: latest
+- name: REPLICAS
+  value: "1"
+- name: SECRET_NAME
+  value: gitlab-token
+- name: SECRET_KEY
+  value: gitlab-token
+- name: GITLAB_URL
+  value: https://gitlab.cee.redhat.com
+- name: PROJECT_IDS
+  description: gitlab project ids
+  required: true
+- name: LOG_LEVEL
+  value: INFO
+- name: CPU_REQUESTS
+  value: 50m
+- name: MEMORY_LIMITS
+  value: 150Mi
+- name: MEMORY_REQUESTS
+  value: 150Mi
