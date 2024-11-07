@@ -1,23 +1,58 @@
-FROM registry.access.redhat.com/ubi9/python-311
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4 as base-python
+ENV PYTHONUNBUFFERED=1
+
+RUN microdnf upgrade -y && \
+    microdnf install -y \
+        shadow-utils \
+        python3.11 && \
+    microdnf clean all && \
+    update-alternatives --install /usr/bin/python3 python /usr/bin/python3.11 1 && \
+    ln -snf /usr/bin/python3.11 /usr/bin/python && \
+    python3 -m ensurepip
+
+WORKDIR /code
+RUN useradd -u 5000 app && chown -R app:app /code
+
+# ---- Interims image to get and build all the python dependencies ----
+FROM base-python as build-base-python
+ENV POETRY_HOME=/opt/poetry \
+    POETRY_VIRTUALENVS_CREATE=false \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PATH=/opt/poetry/bin:$PATH
+
+# install poetry
 ARG POETRY_VERSION
-RUN pip install --upgrade pip && \
-    pip install poetry==$POETRY_VERSION
+RUN POETRY_VERSION=$POETRY_VERSION python3 - < <(curl -sSL https://install.python-poetry.org) && poetry --version
 
-# venv configuration
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root
+# required for poetry to install the dependencies
+COPY --chown=app:app pyproject.toml poetry.lock README.md /code/
+# the code
+COPY --chown=app:app gitlab_project_exporter /code/gitlab_project_exporter/
+COPY --chown=app:app app.sh /code/
 
-# other project related files
-COPY README.md Makefile ./
+# install the python dependencies
+RUN poetry install --no-interaction --no-ansi --only main
 
-# the source code
-ARG CODE_ROOT
-COPY $CODE_ROOT ./$CODE_ROOT
-COPY tests ./tests
-RUN poetry install --only-root
+# ---- Test image ----
+FROM build-base-python as test
+# install the test dependencies
+RUN microdnf install -y make
+RUN poetry install --no-interaction --no-ansi
+# install the tests
+COPY --chown=app:app tests /code/tests/
+COPY --chown=app:app Makefile /code/
+USER app:app
+RUN make test
 
-# run the Makefile target
-ARG MAKE_TARGET
-ARG TWINE_USERNAME
-ARG TWINE_PASSWORD
-RUN make $MAKE_TARGET
+# ---- Bundle everything together in the final image ----
+FROM base-python
+EXPOSE 8080
+
+# get all the python dependencies from the build-python stage
+COPY --from=build-base-python /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
+COPY --from=build-base-python /usr/local/lib64/python3.11/site-packages/ /usr/local/lib64/python3.11/site-packages/
+COPY --from=build-base-python /usr/local/bin/ /usr/local/bin/
+
+COPY --from=build-base-python /code/ /code/
+USER app:app
+CMD ["/code/app.sh"]
