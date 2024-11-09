@@ -7,6 +7,7 @@ objects:
   kind: ServiceAccount
   metadata:
     name: ${NAME}
+  imagePullSecrets: "${{IMAGE_PULL_SECRETS}}"
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -27,14 +28,41 @@ objects:
           app: ${NAME}
       spec:
         serviceAccountName: ${NAME}
+        volumes:
+        - emptyDir: {}
+          name: internal-certificates
+        initContainers:
+        - name: certificates
+          image: ${CERTIFICATES_IMAGE}:${CERTIFICATES_IMAGE_TAG}
+          imagePullPolicy: Always
+          args:
+          - |
+            cp -r /etc/pki/. /tmp/etc-pki/
+          command:
+          - /bin/sh
+          - -c
+          resources:
+            limits:
+              memory: ${CERTIFICATES_CONTAINER_MEMORY_LIMITS}
+            requests:
+              cpu: ${CERTIFICATES_CONTAINER_CPU_REQUESTS}
+              memory: ${CERTIFICATES_CONTAINER_MEMORY_REQUESTS}
+          volumeMounts:
+          - mountPath: /tmp/etc-pki/
+            name: internal-certificates
         containers:
         - name: gitlab-project-exporter
           image: ${IMAGE}:${IMAGE_TAG}
+          volumeMounts:
+          - mountPath: /etc/pki/
+            name: internal-certificates
           ports:
           - containerPort: 8080
             name: http
             protocol: TCP
           env:
+          - name: REQUESTS_CA_BUNDLE
+            value: /etc/pki/tls/cert.pem
           - name: GITLAB_TOKEN
             valueFrom:
               secretKeyRef:
@@ -113,3 +141,15 @@ parameters:
   value: 150Mi
 - name: MEMORY_REQUESTS
   value: 150Mi
+- name: CERTIFICATES_IMAGE
+  value: quay.io/app-sre/internal-redhat-ca
+- name: CERTIFICATES_IMAGE_TAG
+  value: 0.2.0
+- name: CERTIFICATES_CONTAINER_CPU_REQUESTS
+  value: 15m
+- name: CERTIFICATES_CONTAINER_MEMORY_LIMITS
+  value: 20Mi
+- name: CERTIFICATES_CONTAINER_MEMORY_REQUESTS
+  value: 10Mi
+- name: IMAGE_PULL_SECRETS
+  value: '[{"name": "quay.io"}]'
