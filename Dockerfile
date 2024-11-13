@@ -1,4 +1,5 @@
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4@sha256:c0e70387664f30cd9cf2795b547e4a9a51002c44a4a86aa9335ab030134bf392 as base-python
+COPY LICENSE /licenses/LICENSE
 ENV PYTHONUNBUFFERED=1
 
 RUN microdnf upgrade -y && \
@@ -52,7 +53,7 @@ EXPOSE 8080
 COPY --from=build-base-python /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
 COPY --from=build-base-python /usr/local/lib64/python3.11/site-packages/ /usr/local/lib64/python3.11/site-packages/
 COPY --from=build-base-python /usr/local/bin/ /usr/local/bin/
-
 COPY --from=build-base-python /code/ /code/
+
 USER app:app
 CMD ["/code/app.sh"]
