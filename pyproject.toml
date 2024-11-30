@@ -13,7 +13,7 @@ documentation = "https://github.com/app-sre/gitlab-project-exporter"
 [tool.poetry.dependencies]
 fastapi = "^0.115.4"
 python = "^3.11"
-python-gitlab = "^4.13.0"
+python-gitlab = "^5.0.0"
 pydantic = "^2.9.2"
 pydantic-settings = "^2.0.3"
 prometheus-client  = "^0.21.0"
