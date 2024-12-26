@@ -29,7 +29,7 @@ Prometheus exporter for Gitlab projects using the [Uvicorn web server](https://w
 Create a virtual environment for the project:
 
 ```bash
-$ poetry install
+$ uv sync
 ```
 
 ## Get a GitLab personal access token
