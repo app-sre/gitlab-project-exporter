@@ -1,59 +1,48 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4@sha256:c0e70387664f30cd9cf2795b547e4a9a51002c44a4a86aa9335ab030134bf392 as base-python
+#
+# Base image with defaults for all stages
+FROM registry.access.redhat.com/ubi9/python-312@sha256:88ea2d10c741f169681102b46b16c66d20c94c3cc561edbb6444b0de3a1c81b3 AS base
+
 COPY LICENSE /licenses/LICENSE
-ENV PYTHONUNBUFFERED=1
 
-RUN microdnf upgrade -y && \
-    microdnf install -y \
-        shadow-utils \
-        python3.11 && \
-    microdnf clean all && \
-    update-alternatives --install /usr/bin/python3 python /usr/bin/python3.11 1 && \
-    ln -snf /usr/bin/python3.11 /usr/bin/python && \
-    python3 -m ensurepip
+#
+# Builder image
+#
+FROM base AS builder
+COPY --from=ghcr.io/astral-sh/uv:0.5.15@sha256:ea861f8e28b5c0e85ec14dc0f367d9d5cfa5b418024cc250219288d4fff591f1 /uv /bin/uv
 
-WORKDIR /code
-RUN useradd -u 5000 app && chown -R app:app /code
+ENV \
+    # use venv from ubi image
+    UV_PROJECT_ENVIRONMENT=$APP_ROOT \
+    # compile bytecode for faster startup
+    UV_COMPILE_BYTECODE="true" \
+    # disable uv cache. it doesn't make sense in a container
+    UV_NO_CACHE=true
 
-# ---- Interims image to get and build all the python dependencies ----
-FROM base-python as build-base-python
-ENV POETRY_HOME=/opt/poetry \
-    POETRY_VIRTUALENVS_CREATE=false \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PATH=/opt/poetry/bin:$PATH
+COPY pyproject.toml uv.lock ./
+# Test lock file is up to date
+RUN uv lock --check
+# Install the project dependencies
+RUN uv sync --frozen --no-install-project --no-group dev
 
-# install poetry
-ARG POETRY_VERSION
-RUN POETRY_VERSION=$POETRY_VERSION python3 - < <(curl -sSL https://install.python-poetry.org) && poetry --version
+COPY README.md ./
+COPY gitlab_project_exporter ./gitlab_project_exporter
+RUN uv sync --frozen --no-group dev
 
-# required for poetry to install the dependencies
-COPY --chown=app:app pyproject.toml poetry.lock README.md /code/
-# the code
-COPY --chown=app:app gitlab_project_exporter /code/gitlab_project_exporter/
-COPY --chown=app:app app.sh /code/
+#
+# Test image
+#
+FROM builder AS test
 
-# install the python dependencies
-RUN poetry install --no-interaction --no-ansi --only main
+COPY Makefile ./
+RUN uv sync --frozen
 
-# ---- Test image ----
-FROM build-base-python as test
-# install the test dependencies
-RUN microdnf install -y make
-RUN poetry install --no-interaction --no-ansi
-# install the tests
-COPY --chown=app:app tests /code/tests/
-COPY --chown=app:app Makefile /code/
-USER app:app
+COPY tests ./tests
 RUN make test
 
-# ---- Bundle everything together in the final image ----
-FROM base-python
+#
+# Production image
+#
+FROM base AS prod
 EXPOSE 8080
-
-# get all the python dependencies from the build-python stage
-COPY --from=build-base-python /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
-COPY --from=build-base-python /usr/local/lib64/python3.11/site-packages/ /usr/local/lib64/python3.11/site-packages/
-COPY --from=build-base-python /usr/local/bin/ /usr/local/bin/
-COPY --from=build-base-python /code/ /code/
-
-USER app:app
+COPY --from=builder /opt/app-root /opt/app-root
 CMD ["/code/app.sh"]
