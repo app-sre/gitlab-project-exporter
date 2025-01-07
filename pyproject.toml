@@ -22,7 +22,7 @@ documentation = "https://github.com/app-sre/gitlab-project-exporter"
 [dependency-groups]
 dev = [
     "httpx ~=0.27.2",
-    "mypy ~=1.13.0",
+    "mypy ~=1.14.1",
     "pytest ~=8.3.4",
     "pytest-cov ~=6.0.0",
     "pytest-mock ~=3.14.0",
