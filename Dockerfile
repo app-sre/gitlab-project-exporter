@@ -24,7 +24,7 @@ RUN uv lock --check
 # Install the project dependencies
 RUN uv sync --frozen --no-install-project --no-group dev
 
-COPY README.md ./
+COPY README.md app.sh ./
 COPY gitlab_project_exporter ./gitlab_project_exporter
 RUN uv sync --frozen --no-group dev
 
@@ -45,4 +45,4 @@ RUN make test
 FROM base AS prod
 EXPOSE 8080
 COPY --from=builder /opt/app-root /opt/app-root
-CMD ["/code/app.sh"]
+CMD ["/opt/app-root/src/app.sh"]
