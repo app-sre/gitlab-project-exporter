@@ -139,7 +139,7 @@ requires-dist = [
     { name = "prometheus-client", specifier = "~=0.21.1" },
     { name = "pydantic", specifier = "~=2.10.5" },
     { name = "pydantic-settings", specifier = "~=2.7.1" },
-    { name = "python-gitlab", specifier = "~=4.13.0" },
+    { name = "python-gitlab", specifier = "~=5.3.1" },
     { name = "uvicorn", specifier = "~=0.34.0" },
 ]
 
@@ -383,15 +383,15 @@ wheels = [
 
 [[package]]
 name = "python-gitlab"
-version = "4.13.0"
+version = "5.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
     { name = "requests-toolbelt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/ea/e2cde926d63526935c1df259177371a195089b631d67a577fe5c39fbc7e1/python_gitlab-4.13.0.tar.gz", hash = "sha256:576bfb0901faca0c6b2d1ff2592e02944a6ec3e086c3129fb43c2a0df56a1c67", size = 484996 }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/9e/cc1b1742a3c3fec7f9ba97bd43ecbd36f4372ce25f106dfe70e3dcfff644/python_gitlab-5.3.1.tar.gz", hash = "sha256:caabcb500210f4f59ef9f8feec4f99e821d652a55c72ec9f5bf820f45fc17298", size = 388031 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6b/5e/5fb4dcae9f5af5463c16952823d446ca449cce920efe8669871f600f0ab9/python_gitlab-4.13.0-py3-none-any.whl", hash = "sha256:8299a054fb571da16e1a8c1868fff01f34ac41ea1410c713a4647b3bbb2aa279", size = 145254 },
+    { url = "https://files.pythonhosted.org/packages/d6/f3/0eee63eb8a7478d92bf11f00567abbd60414f125836d485c6d786f2b4945/python_gitlab-5.3.1-py3-none-any.whl", hash = "sha256:57e8705ccd04617d6d199494487f4ea26f76cb9ac4ebab2490909cc464ea5e8e", size = 146768 },
 ]
 
 [[package]]
