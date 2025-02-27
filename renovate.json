@@ -9,8 +9,13 @@
       "matchPackageNames": [
         "registry.access.redhat.com/ubi9/python-312"
       ],
-      "datasources": ["docker"],
-      "matchUpdateTypes": ["digest", "pinDigest"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "digest",
+        "pinDigest"
+      ],
       "automerge": true
     }
   ]
