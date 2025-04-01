@@ -17,6 +17,13 @@
         "pinDigest"
       ],
       "automerge": true
+    },
+    {
+      "description": "Automerge of pydantic updates",
+      "matchPackageNames": ["pydantic"],
+      "datasources": ["pypi"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
     }
   ]
 }
