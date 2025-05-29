@@ -5,20 +5,6 @@
   ],
   "packageRules": [
     {
-      "description": "Automerge updates to python-312 images",
-      "matchPackageNames": [
-        "registry.access.redhat.com/ubi9/python-312"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchUpdateTypes": [
-        "digest",
-        "pinDigest"
-      ],
-      "automerge": true
-    },
-    {
       "description": "Automerge of pydantic updates",
       "matchPackageNames": [
         "pydantic"
