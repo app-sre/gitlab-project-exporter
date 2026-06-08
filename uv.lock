@@ -159,8 +159,8 @@ requires-dist = [
     { name = "prometheus-client", specifier = "~=0.25.0" },
     { name = "pydantic", specifier = "~=2.13.0" },
     { name = "pydantic-settings", specifier = "~=2.14.1" },
-    { name = "python-gitlab", specifier = "~=8.3.0" },
-    { name = "uvicorn", specifier = "~=0.46.0" },
+    { name = "python-gitlab", specifier = "~=8.4.0" },
+    { name = "uvicorn", specifier = "~=0.49.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -172,7 +172,7 @@ dev = [
     { name = "pytest-mock", specifier = "~=3.15.0" },
     { name = "responses", specifier = "~=0.26.0" },
     { name = "ruff", specifier = "~=0.15.0" },
-    { name = "uvicorn", extras = ["standard"], specifier = "~=0.46.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = "~=0.49.0" },
 ]
 
 [[package]]
@@ -454,15 +454,15 @@ wheels = [
 
 [[package]]
 name = "python-gitlab"
-version = "8.3.0"
+version = "8.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
     { name = "requests-toolbelt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/86/00/9a9eb79cf3608f9ab172bc6311b40a7ed128cae7be42dbf2d3830d713a48/python_gitlab-8.3.0.tar.gz", hash = "sha256:2ca67cf64b8d9290fe64463cfef6e77dbde066285dd848db2eb7816d6a7e9ec9", size = 410332, upload-time = "2026-04-28T02:32:30.16Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/96/c20b37e7fd86481e1bf2b1922e84b98dc5477fd9aafd30e5c5086f94d922/python_gitlab-8.4.0.tar.gz", hash = "sha256:f36f20ec3f09138f3b12089394941f4dbe5a407021bed71b70a04bbdd37b8a74", size = 410803, upload-time = "2026-05-28T02:43:32.857Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/df/b1/3e3144c3ada2ae1a60a378396629064ef14e425e356c8e7c1db3a50ef351/python_gitlab-8.3.0-py3-none-any.whl", hash = "sha256:7aace3585d57ee97ebcb74bc776f30af3e861e285290082a91646348aca3f22a", size = 148177, upload-time = "2026-04-28T02:32:28.133Z" },
+    { url = "https://files.pythonhosted.org/packages/b1/af/1c3540dbdccb85fca0b0bbc58cdaf514d0a830d7e0302b2059a6c627b172/python_gitlab-8.4.0-py3-none-any.whl", hash = "sha256:102c747d9c107820e215cc5913627388001592a9a3ba1b43fc341a40f6943e72", size = 148242, upload-time = "2026-05-28T02:43:31.505Z" },
 ]
 
 [[package]]
@@ -594,15 +594,15 @@ wheels = [
 
 [[package]]
 name = "uvicorn"
-version = "0.46.0"
+version = "0.49.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "h11" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1f/93/041fca8274050e40e6791f267d82e0e2e27dd165627bd640d3e0e378d877/uvicorn-0.46.0.tar.gz", hash = "sha256:fb9da0926999cc6cb22dc7cd71a94a632f078e6ae47ff683c5c420750fb7413d", size = 88758, upload-time = "2026-04-23T07:16:00.151Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/1f/fa18009dea8469069cca78a4e877a008ab78f08b064bfc9ab891579077ff/uvicorn-0.49.0.tar.gz", hash = "sha256:ebf4271aa580d9de97f93192d4595176df6e91f9aae919ca73e4fc07df1e66a3", size = 91284, upload-time = "2026-06-03T22:01:30.448Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/31/a3/5b1562db76a5a488274b2332a97199b32d0442aca0ed193697fd47786316/uvicorn-0.46.0-py3-none-any.whl", hash = "sha256:bbebbcbed972d162afca128605223022bedd345b7bc7855ce66deb31487a9048", size = 70926, upload-time = "2026-04-23T07:15:58.355Z" },
+    { url = "https://files.pythonhosted.org/packages/88/fa/e1388bbcf24ef3274f45c0c1c7b501fd14971037c1b6ee23610553307497/uvicorn-0.49.0-py3-none-any.whl", hash = "sha256:ba3d14c3ee7e41c6c654c46c9eb489d33213cdd30aa1696eab1374337c13f68f", size = 71376, upload-time = "2026-06-03T22:01:29.037Z" },
 ]
 
 [package.optional-dependencies]
