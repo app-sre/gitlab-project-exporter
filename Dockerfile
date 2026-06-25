@@ -1,6 +1,6 @@
 #
 # Base image with defaults for all stages
-FROM registry.access.redhat.com/ubi9/python-312@sha256:37c869e16388c960d533f317c48e2cad8e80561b0c6b59e697e38e7e9d103b9b AS base
+FROM registry.access.redhat.com/ubi9/python-312@sha256:92fb8289951609b9d6daafffd1db0a52a73432f2de1153281fc2fbfb97d59c0f AS base
 
 COPY LICENSE /licenses/LICENSE
 
