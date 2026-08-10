@@ -1,10 +1,9 @@
 import logging
-from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from http import HTTPStatus
+from typing import TYPE_CHECKING
 
-from gitlab import Gitlab
 from gitlab.exceptions import GitlabGetError
 from prometheus_client.core import GaugeMetricFamily, Metric
 from prometheus_client.registry import Collector
@@ -13,6 +12,11 @@ from gitlab_project_exporter.gitlab_project import (
     GetRemoteMirrorsStatusType,
     GitlabProject,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from gitlab import Gitlab
 
 LOG = logging.getLogger(__name__)
 
@@ -91,7 +95,7 @@ class GitLabProjectCollector(Collector):
 
         # ThreadPoolExecutor catches and ignores all exceptions, hence the wide catch
         # here. It will be analyzed and acted upon above.
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:  # ruff: ignore[blind-except]
             result = RemoteMirrorCollectionResult(project_id=project_id, exception=e)
 
         return result

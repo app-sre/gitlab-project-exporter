@@ -1,9 +1,11 @@
 import logging
 from enum import IntEnum
-from typing import Never
+from typing import TYPE_CHECKING, Never
 
-from gitlab import Gitlab
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from gitlab import Gitlab
 
 LOG = logging.getLogger(__name__)
 TIMEOUT = 10

@@ -1,5 +1,5 @@
-from collections.abc import Iterable
 from http import HTTPStatus
+from typing import TYPE_CHECKING
 
 import pytest
 import responses
@@ -10,6 +10,9 @@ from gitlab_project_exporter.gitlab_project import (
     MirrorStatusCode,
     RemoteMirrorStatus,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 @pytest.fixture

@@ -1,4 +1,7 @@
-from gitlab_project_exporter.config import Settings
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from gitlab_project_exporter.config import Settings
 
 
 # based on uvicorn.logging.LOGGING_CONFIG

@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, FastAPI
 from gitlab import Gitlab
@@ -6,6 +6,9 @@ from prometheus_client import CollectorRegistry, make_asgi_app, multiprocess
 
 from gitlab_project_exporter.collector import GitLabProjectCollector
 from gitlab_project_exporter.config import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 default_router = APIRouter()
 
