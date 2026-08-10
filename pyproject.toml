@@ -21,6 +21,7 @@ documentation = "https://github.com/app-sre/gitlab-project-exporter"
 
 [dependency-groups]
 dev = [
+    "httpx2==2.10.0",            # needed by starlette.client for testing
     "mypy==2.3.0",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
