@@ -1,10 +1,10 @@
 from http import HTTPStatus
+from typing import TYPE_CHECKING
 
 import pytest
 from gitlab import Gitlab
 from gitlab.exceptions import GitlabGetError
 from prometheus_client.core import GaugeMetricFamily
-from pytest_mock import MockerFixture
 
 from gitlab_project_exporter.collector import (
     GitLabProjectCollector,
@@ -14,6 +14,9 @@ from gitlab_project_exporter.gitlab_project import (
     GitlabProject,
     RemoteMirrorStatus,
 )
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 MAX_WORKERS = 10
 

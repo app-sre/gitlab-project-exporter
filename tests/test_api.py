@@ -1,15 +1,19 @@
 from http import HTTPStatus
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from fastapi.testclient import TestClient
-from pytest_mock import MockerFixture
 
 from gitlab_project_exporter.gitlab_project import (
     GitlabProject,
     RemoteMirrorStatus,
 )
 from gitlab_project_exporter.server import create_app
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture(autouse=True)
