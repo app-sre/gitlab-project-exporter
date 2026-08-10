@@ -91,7 +91,7 @@ class GitLabProjectCollector(Collector):
 
         # ThreadPoolExecutor catches and ignores all exceptions, hence the wide catch
         # here. It will be analyzed and acted upon above.
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:  # ruff: ignore[blind-except]
             result = RemoteMirrorCollectionResult(project_id=project_id, exception=e)
 
         return result
